@@ -10,4 +10,5 @@ download_and_extract_archive(url, 'download', 'data')
 
 ## Inference
 - Source codes for inference the models based on pixel classification results or probability of pixels how much they can be classified as cloud are provided in the folder. <\br>
-- The modules are in testing to make them as plugins for Waggle nodes (3/27/2021).
+- The source codes in `raw` folder is stand alone modules for inference. Additional information how to run the codes will be provided (3/27/2021).
+- The modules in `plugins` are in testing to make them as plugins to run them in Waggle nodes (3/27/2021).
