@@ -35,31 +35,7 @@ def find_label(key):
             return i
 
 
-if __name__=='__main__':
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('-fc', '--fcn_config', type=str, help='path to fcn configuration list')
-    parser.add_argument('-uc', '--unet_config', type=str, help='path to unet configuration list')
-    parser.add_argument('-pc', '--pls_config', type=str, help='path to plsregression configuration list')
-    parser.add_argument('-ii', '--input_image', type=str, help='path to an input image')
-    parser.add_argument('-il', '--input_label', type=str, help='path to an input label')
-    parser.add_argument('-im', '--massive', type=str, help='path to an input folder')
-    parser.add_argument('-ml', '--massive_labels', type=str, help='y/n if there are labels for the massive images')
-    parser.add_argument('--image_type', type=str, default='voc', help='segmentation class coloring type')
-
-    args = parser.parse_args()
-
-    if args.input_image != None and args.input_label == None:
-        print('[warning]: path to the input label is not provided')
-
-    if args.fcn_config == None and args.unet_config == None and args.pls_config == None:
-        parser.print_help()
-        exit(0)
-
-    print(datetime.datetime.now())
-
-    ## read configuration files
+def load_config(args):
     opts = SimpleNamespace()
 
     if args.fcn_config != None:
@@ -80,85 +56,100 @@ if __name__=='__main__':
         opts.unet_cfg = unet_configurations
         print('Unet loaded')
 
+    return opts
 
-    if args.input_image == None:
-        args.massive_images = args.massive + '*'
-        input_images = glob.glob(args.massive_images)
+
+def load_inputs(args):
+    input_images = []
+    labels = []
+
+    if args.multiple_images != None:
+        args.multiple_images = args.multiple_images + '*'
+        input_images = glob.glob(args.multiple_images)
         input_images = sorted(input_images)
 
-
-        labels = []
-        if args.massive_labels != None:
-            args.massive_labels = args.massive + '*'
-            labels = glob.glob(args.massive_labels)
+        if args.multiple_labels != None:
+            args.multiple_labels = args.multiple_labels + '*'
+            labels = glob.glob(args.multiple_labels)
             labels = sorted(labels)
 
-        elif args.massive_labels == None:
-            labels = ['none']
-
-
-        print(len(input_images), len(labels))
-
-        if args.fcn_config != None:
-            fcn_main = FCN_Main(opts.fcn_cfg)
-        if args.pls_config != None:
-            pls_main = PLS_Main(opts.pls_cfg)
-        if args.unet_config != None:
-            unet_main = Unet_Main(opts.unet_cfg)
-
-        count = 0
-        #for input_image in input_images:
-        for i in range(len(input_images)):
-            count += 1
-            print(count)
-
-            if len(labels) != 1:
-                print(labels[i])
-                ratio, np_label = ground_truth(labels[i])
-            else:
-                print(input_images[i])
-                image = Image.open(input_images[0])
-                np_image = np.asarray(image)
-                ratio = 0
-                np_label = np.zeros([np_image.shape[0], np_image.shape[1]])
-
-
-            if args.fcn_config != None:
-                fcn_ratio = fcn_main.run(input_images[i], np_label)
-            if args.pls_config != None:
-                pls_ratio = pls_main.run(input_images[i], np_label)
-            if args.unet_config != None:
-                unet_ratio = unet_main.run(input_images[i], np_label)
-
-            #print('fcn', fcn_ratio, 'pls', pls_ratio, 'unet', unet_ratio)
-
-        print(datetime.datetime.now())
-
     elif args.input_image != None:
+        input_images.append(args.input_image)
         if args.input_label != None:
-            ratio, np_label = ground_truth(args.input_label)
+            labels.append(args.input_label)
+    else:
+        raise Exception('input image path is not provided')
+
+#     print(len(input_images), len(labels))
+    return input_images, labels
+
+
+
+if __name__=='__main__':
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-fc', '--fcn_config', type=str, help='path to fcn configuration list')
+    parser.add_argument('-uc', '--unet_config', type=str, help='path to unet configuration list')
+    parser.add_argument('-pc', '--pls_config', type=str, help='path to plsregression configuration list')
+    parser.add_argument('-ii', '--single_image', type=str, help='path to an input image')
+    parser.add_argument('-il', '--single_label', type=str, help='path to an input label')
+    parser.add_argument('-im', '--multiple_images', type=str, help='path to an input folder')
+    parser.add_argument('-ml', '--multiple_labels', type=str, help='y/n if there are labels for the massive images')
+    parser.add_argument('--image_type', type=str, default='voc', help='segmentation class coloring type')
+
+    args = parser.parse_args()
+
+    if args.input_image != None and args.input_label == None:
+        print('[warning] path to the label is not provided')
+
+    if args.fcn_config == None and args.unet_config == None and args.pls_config == None:
+        print('[Error] None of configuration is provided')
+        parser.print_help()
+        exit(0)
+
+    print(datetime.datetime.now())
+
+    ## read configuration files
+    opts = load_config(args)
+
+    ## load classes
+    if args.fcn_config != None:
+        fcn_main = FCN_Main(opts.fcn_cfg)
+    if args.pls_config != None:
+        pls_main = PLS_Main(opts.pls_cfg)
+    if args.unet_config != None:
+        unet_main = Unet_Main(opts.unet_cfg)
+
+    ## load images and labels
+    input_images, labels = load_inputs(args)
+
+    count = 0
+    #for input_image in input_images:
+    for i in range(len(input_images)):
+        count += 1
+        print(count)
+
+        if len(labels) != 0:
+            print(labels[i])
+            ratio, np_label = ground_truth(labels[i])
         else:
-            image = Image.open(args.input_image)
+            print(input_images[i])
+            image = Image.open(input_images[0])
             np_image = np.asarray(image)
             ratio = 0
             np_label = np.zeros([np_image.shape[0], np_image.shape[1]])
 
-        print(type(np_label), np_label.shape)
 
         if args.fcn_config != None:
-            fcn_main = FCN_Main(opts.fcn_cfg)
-            fcn_ratio = fcn_main.run(args.input_image, np_label)
-
+            fcn_ratio = fcn_main.run(input_images[i], np_label)
         if args.pls_config != None:
-            pls_main = PLS_Main(opts.pls_cfg)
-            pls_ratio = pls_main.run(args.input_image, np_label)
-
+            pls_ratio = pls_main.run(input_images[i], np_label)
         if args.unet_config != None:
-            unet_main = Unet_Main(opts.unet_cfg)
-            unet_ratio = unet_main.run(args.input_image, np_label)
+            unet_ratio = unet_main.run(input_images[i], np_label)
 
+        #print('fcn', fcn_ratio, 'pls', pls_ratio, 'unet', unet_ratio)
 
-    else:
-        raise Exception('input image path is not provided')
+        print(datetime.datetime.now())
 
 
