@@ -15,6 +15,8 @@ from PIL import Image
 import pickle
 
 
+import waggle.plugin as plugin
+
 def load_config(args):
     opts = SimpleNamespace()
 
@@ -138,5 +140,8 @@ if __name__=='__main__':
         if args.adaboost_config != None:
             adaboost = adaboost_main.evaluation(deeplab, fcn, unet, pls, input_images[i])
 
-
-
+        plugin.publish('env.cloud_cover.fcn', fcn)
+        plugin.publish('env.cloud_cover.unet', unet)
+        plugin.publish('env.cloud_cover.pls', pls)
+        plugin.publish('env.cloud_cover.deeplab', deeplab)
+        plugin.publish('env.cloud_cover.adaboost', adaboost)
