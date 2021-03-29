@@ -1,0 +1,9 @@
+{
+    "n_classes": 2,
+    "model": "/home/waggle/sp_models/using_models/models/swimseg_model.pkl",
+    "resize": 300,
+    "output": "./output_pls_test_mask/",
+    "score": "./score_pls_test_mask/",
+    "threshold": -45,
+    "save": "False"
+}

@@ -1,0 +1,10 @@
+{
+    "model": "/home/waggle/sp_models/using_models/models/AdaBoost_model_norm_wo_entropy.pkl",
+    "resize": 300,
+    "output": "./output_ada_test_mask/",
+    "score": "./scores_ada_test_mask/",
+    "threshold": 0.6,
+    "max_depth": 4,
+    "n_estimators": 200,
+    "save": "False"
+}
