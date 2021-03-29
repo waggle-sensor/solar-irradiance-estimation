@@ -1,8 +1,0 @@
-{
-    "n_classes": 1,
-    "scale": 1.0,
-    "model": "/home/waggle/sp_models/using_models/models/CP_epoch228a.pth",
-    "output": "./output_unet_june_norm/",
-    "score": "./scores_unet_june_norm/",
-    "threshold": 0.5
-}

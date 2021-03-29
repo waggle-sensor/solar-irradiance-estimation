@@ -1,0 +1,1 @@
+python3 main.py --fcn_config config_fcn.list --unet_config config_unet.list --pls_config config_pls.list --deeplab_config config_deeplab.list --multiple_images /storage/sunspot/001e06107d7f/2020_06/01/
