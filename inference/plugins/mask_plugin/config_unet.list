@@ -1,7 +1,7 @@
 {
     "n_classes": 1,
     "scale": 1.0,
-    "model": "/home/waggle/sp_models/using_models/models/CP_epoch228a.pth",
+    "model": "/models/CP_epoch228a.pth",
     "output": "./output_unet_test_mask/",
     "score": "./scores_unet_test_mask/",
     "threshold": 0.5,
