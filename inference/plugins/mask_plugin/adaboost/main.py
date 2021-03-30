@@ -5,6 +5,7 @@ import argparse
 
 import PIL
 from PIL import Image
+import pickle
 
 import numpy as np
 from sklearn.tree import DecisionTreeRegressor
@@ -22,7 +23,7 @@ import time
 class AdaBoost_Main:
     def __init__(self, args):
         self.args = args
-        self.adaboost = pickle.load(open(args.model, 'rb'))
+        self.adaboost = pickle.load(open(args['model'], 'rb'))
 
         if args['save'] == 'True':
             if not os.path.exists(args['score']):
@@ -38,7 +39,7 @@ class AdaBoost_Main:
 
         #### mask
         for j in range(len(score)):
-            if score[j] > self.args['thr']:
+            if score[j] > self.args['threshold']:
                 score[j] = True
             else:
                 score[j] = False

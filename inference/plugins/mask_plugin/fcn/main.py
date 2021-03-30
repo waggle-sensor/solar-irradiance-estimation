@@ -23,11 +23,11 @@ class FCN_Main:
             checkpoint = torch.load(args['model'], map_location=torch.device('cpu'))
         self.model.load_state_dict(checkpoint['model_state_dict'])
 
-        if not osp.exists(args['output']):
-            os.makedirs(args['output'])
-
-        if not os.path.exists(args['score']):
-            os.makedirs(args['score'])
+        if args['save'] == 'True':
+            if not osp.exists(args['output']):
+                os.makedirs(args['output'])
+            if not os.path.exists(args['score']):
+                os.makedirs(args['score'])
 
         # create a color pallette, selecting a color for each class
         self.palette = torch.tensor([2 ** 25 - 1, 2 ** 15 - 1, 2 ** 21 - 1])

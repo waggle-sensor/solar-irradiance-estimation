@@ -2,10 +2,11 @@
     "n_classes": 2,
     "backbone": "resnet",
     "fcn": "101",
-    "model": "/models/model_best_28000.pth.tar",
+    "model": "ML_models/fcn_model.tar",
     "resize": 300,
     "output": "./output_fcn_test_mask/",
     "score": "./scores_fcn_test_mask/",
     "threshold": 0.5,
-    "save": "False"
+    "save": "False",
+    "result": ""
 }

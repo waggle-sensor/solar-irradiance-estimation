@@ -1,1 +1,1 @@
-python3 main.py --fcn_config config_fcn.list --unet_config config_unet.list --pls_config config_pls.list --deeplab_config config_deeplab.list --adaboost_config config_adaboost.list --multiple_images /input/images/
+python3 all_plugin.py --fcn_config config_fcn.list --unet_config config_unet.list --pls_config config_pls.list --deeplab_config config_deeplab.list --adaboost_config config_adaboost.list --multiple_images /input/images/

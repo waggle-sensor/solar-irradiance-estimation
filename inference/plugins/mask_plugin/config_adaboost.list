@@ -1,10 +1,11 @@
 {
-    "model": "/models/AdaBoost_model.pkl",
+    "model": "ML_models/AdaBoost_model.pkl",
     "resize": 300,
     "output": "./output_ada_test_mask/",
     "score": "./scores_ada_test_mask/",
     "threshold": 0.6,
     "max_depth": 4,
     "n_estimators": 200,
-    "save": "False"
+    "save": "False",
+    "result": "send"
 }

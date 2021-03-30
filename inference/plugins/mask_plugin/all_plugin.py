@@ -12,10 +12,15 @@ import glob
 
 import numpy as np
 from PIL import Image
-import pickle
 
 
 import waggle.plugin as plugin
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+plugin.init()
+
 
 def load_config(args):
     opts = SimpleNamespace()
@@ -96,10 +101,10 @@ if __name__=='__main__':
 
     args = parser.parse_args()
 
-    if args.input_image != None and args.multiple_images == None:
+    if args.single_image == None and args.multiple_images == None:
         print('[warning] path to the images is not provided')
 
-    if args.fcn_config == None and args.unet_config == None and args.pls_config == None and args.deeplab.config == None:
+    if args.fcn_config == None and args.unet_config == None and args.pls_config == None and args.deeplab_config == None:
         print('[Error] None of configuration is provided')
         parser.print_help()
         exit(0)
@@ -140,8 +145,13 @@ if __name__=='__main__':
         if args.adaboost_config != None:
             adaboost = adaboost_main.evaluation(deeplab, fcn, unet, pls, input_images[i])
 
-        plugin.publish('env.cloud_cover.fcn', fcn)
-        plugin.publish('env.cloud_cover.unet', unet)
-        plugin.publish('env.cloud_cover.pls', pls)
-        plugin.publish('env.cloud_cover.deeplab', deeplab)
-        plugin.publish('env.cloud_cover.adaboost', adaboost)
+        if opts.fcn_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.fcn', fcn)
+        if opts.unet_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.unet', unet)
+        if opts.pls_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.pls', pls)
+        if opts.deeplab_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.deeplab', deeplab)
+        if opts.adaboost_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.adaboost', adaboost)

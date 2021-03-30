@@ -27,7 +27,6 @@ class Unet_Main:
         w, h = pil_img.size
         newW, newH = int(scale * w), int(scale * h)
         newW, newH = 300, 300
-        assert newW > 0 and newH > 0, 'Scale is too small'
         pil_img = pil_img.resize((newW, newH))
 
         img_nd = np.array(pil_img)
@@ -74,7 +73,7 @@ class Unet_Main:
                 else:
                     scores[i] = False
             #### end
-
+            returning_scores = scores
 
             ## save scores and images
             if self.args['save'] == 'True':
@@ -84,33 +83,35 @@ class Unet_Main:
                 np.savetxt(output_path, scores, delimiter=',')
 
 
-            tf = transforms.Compose(
-                [
-                    transforms.ToPILImage(),
-                    transforms.Resize(full_img.size[1]),
-                    transforms.ToTensor()
-                ]
-            )
+#             tf = transforms.Compose(
+#                 [
+#                     transforms.ToPILImage(),
+#                     transforms.Resize(full_img.size[1]),
+#                     transforms.ToTensor()
+#                 ]
+#             )
 
-            probs = tf(probs.cpu())
-            full_mask = probs.squeeze().cpu().numpy()
+#             probs = tf(probs.cpu())
+#             full_mask = probs.squeeze().cpu().numpy()
 
-        return full_mask > out_threshold
+#         return full_mask > out_threshold
+        return returning_scores
 
 
-    def run(self, image_path, np_label):
+    def run(self, image_path):
+        pathsplit = image_path.split('/')
         img = Image.open(image_path)
         mask = self.predict_img(pathsplit, full_img=img,
                                 scale_factor=self.args['scale'],
                                 out_threshold=self.args['threshold'])
 
         if self.args['save'] == 'True':
-            pathsplit = image_path.split('/')
             out_file = ('{}OUT_{}'.format(self.args['output'], pathsplit[-1]))
             result = Image.fromarray((mask * 255).astype(np.uint8))
             result.save(out_file)
 
-        return mask
+        return mask.flatten()
+
 
 
 
