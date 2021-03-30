@@ -12,7 +12,13 @@ import glob
 
 import numpy as np
 from PIL import Image
-import pickle
+
+import waggle.plugin as plugin
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+plugin.init()
 
 
 def load_config(args):
@@ -53,27 +59,16 @@ def load_config(args):
 
 def load_inputs(args):
     input_images = []
-    labels = []
 
     if args.multiple_images != None:
         args.multiple_images = args.multiple_images + '*'
         input_images = glob.glob(args.multiple_images)
         input_images = sorted(input_images)
 
-        if args.multiple_labels != None:
-            args.multiple_labels = args.multiple_labels + '*'
-            labels = glob.glob(args.multiple_labels)
-            labels = sorted(labels)
-
     elif args.input_image != None:
         input_images.append(args.input_image)
-        if args.input_label != None:
-            labels.append(args.input_label)
-    else:
-        raise Exception('input image path is not provided')
 
-#     print(len(input_images), len(labels))
-    return input_images, labels
+    return input_images
 
 
 
@@ -88,16 +83,14 @@ if __name__=='__main__':
     parser.add_argument('--adaboost_config', type=str, help='path to adaboost configuration list')
 
     parser.add_argument('--single_image', type=str, help='path to an input image')
-    parser.add_argument('--single_label', type=str, help='path to an input label')
     parser.add_argument('--multiple_images', type=str, help='path to an input folder')
-    parser.add_argument('--multiple_labels', type=str, help='y/n if there are labels for the massive images')
-    
+
     args = parser.parse_args()
 
-    if args.input_image != None and args.input_label == None:
-        print('[warning] path to the label is not provided')
+    if args.single_image == None and args.multiple_images == None:
+        print('[warning] path to the images is not provided')
 
-    if args.fcn_config == None and args.unet_config == None and args.pls_config == None and args.deeplab.config == None:
+    if args.fcn_config == None and args.unet_config == None and args.pls_config == None and args.deeplab_config == None:
         print('[Error] None of configuration is provided')
         parser.print_help()
         exit(0)
@@ -119,7 +112,7 @@ if __name__=='__main__':
         adaboost_main = AdaBoost_Main(opts.adaboost_cfg)
 
     ## load images and labels
-    input_images, labels = load_inputs(args)
+    input_images = load_inputs(args)
 
     count = 0
     #for input_image in input_images:
@@ -138,5 +131,14 @@ if __name__=='__main__':
         if args.adaboost_config != None:
             adaboost = adaboost_main.evaluation(deeplab, fcn, unet, pls, input_images[i])
 
-
+        if opts.fcn_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.fcn', fcn)
+        if opts.unet_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.unet', unet)
+        if opts.pls_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.pls', pls)
+        if opts.deeplab_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.deeplab', deeplab)
+        if opts.adaboost_cfg['result'] == 'send':
+            plugin.publish('env.cloud_cover.adaboost', adaboost)
 

@@ -3,8 +3,8 @@ import torch.nn as nn
 
 from torchvision import transforms
 
-import network
-import utils
+import deeplab.network as network
+import deeplab.utils as utils
 
 import os
 
@@ -50,10 +50,11 @@ class ASPP_Main:
         self.model.eval()
 
 
-        if not os.path.exists(opts['output']):
-            os.makedirs(opts['output'])
-        if not os.path.exists(opts['score']):
-            os.makedirs(opts['score'])
+        if opts['save'] == 'True':
+            if not os.path.exists(opts['output']):
+                os.makedirs(opts['output'])
+            if not os.path.exists(opts['score']):
+                os.makedirs(opts['score'])
 
 
         # create a color pallette, selecting a color for each class
@@ -63,7 +64,7 @@ class ASPP_Main:
 
 
 
-    def run(self, input_path, label):
+    def run(self, input_path):
         # print(input_path)
         """Do validation and return specified samples"""
         input_image = Image.open(input_path)
@@ -82,7 +83,7 @@ class ASPP_Main:
 
         output = score[0]
         output_predictions = output.argmax(0)
-        
+
         scores = output[1].detach().cpu().numpy().reshape(-1)
         mins = min(scores)
         maxs = max(scores)

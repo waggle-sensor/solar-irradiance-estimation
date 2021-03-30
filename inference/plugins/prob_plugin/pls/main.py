@@ -14,10 +14,11 @@ class PLS_Main:
         self.args = args
         self.net = pickle.load(open(args['model'], 'rb'))
 
-        if not osp.exists(args['output']):
-            os.makedirs(args['output'])
-        if not osp.exists(args['score']):
-            os.makedirs(args['score'])
+        if args['save'] == 'True':
+            if not osp.exists(args['output']):
+                os.makedirs(args['output'])
+            if not osp.exists(args['score']):
+                os.makedirs(args['score'])
 
 
     def generate_features(self, path, resizing):
@@ -57,7 +58,7 @@ class PLS_Main:
 
         maxs = max(score)
         mins = min(score)
-        scores = [(i-mins)/(maxs-mins) for i in scores]
+        scores = [(i-mins)/(maxs-mins) for i in score]
         returning_score = scores
 
         ######### save output image and scores

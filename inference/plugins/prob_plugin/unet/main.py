@@ -18,10 +18,11 @@ class Unet_Main:
         self.net.to(device=self.device)
         self.net.load_state_dict(torch.load(args['model'], map_location=self.device))
 
-        if not os.path.exists(args['output']):
-            os.makedirs(args['output'])
-        if not os.path.exists(args['score']):
-            os.makedirs(args['score'])
+        if args['save'] == 'True':
+            if not os.path.exists(args['output']):
+                os.makedirs(args['output'])
+            if not os.path.exists(args['score']):
+                os.makedirs(args['score'])
 
     def preprocess(self, pil_img, scale, n_classes=2):
         w, h = pil_img.size
@@ -77,31 +78,19 @@ class Unet_Main:
                                 pathsplit[-1].split('.')[0] + '.txt'))
                 np.savetxt(output_path, scores, delimiter=',')
 
-
-            tf = transforms.Compose(
-                [
-                    transforms.ToPILImage(),
-                    transforms.Resize(full_img.size[1]),
-                    transforms.ToTensor()
-                ]
-            )
-
         return scores
 
 
-    def run(self, image_path, np_label):
+    def run(self, image_path):
+        pathsplit = image_path.split('/')
         img = Image.open(image_path)
         mask = self.predict_img(pathsplit, full_img=img,
                                 scale_factor=self.args['scale'],
                                 out_threshold=self.args['threshold'])
 
         if self.args['save'] == 'True':
-            pathsplit = image_path.split('/')
             out_file = ('{}OUT_{}'.format(self.args['output'], pathsplit[-1]))
             result = Image.fromarray((mask * 255).astype(np.uint8))
             result.save(out_file)
 
         return mask
-
-
-

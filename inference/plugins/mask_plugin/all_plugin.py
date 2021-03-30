@@ -60,27 +60,16 @@ def load_config(args):
 
 def load_inputs(args):
     input_images = []
-    labels = []
 
     if args.multiple_images != None:
         args.multiple_images = args.multiple_images + '*'
         input_images = glob.glob(args.multiple_images)
         input_images = sorted(input_images)
 
-        if args.multiple_labels != None:
-            args.multiple_labels = args.multiple_labels + '*'
-            labels = glob.glob(args.multiple_labels)
-            labels = sorted(labels)
-
     elif args.input_image != None:
         input_images.append(args.input_image)
-        if args.input_label != None:
-            labels.append(args.input_label)
-    else:
-        raise Exception('input image path is not provided')
 
-#     print(len(input_images), len(labels))
-    return input_images, labels
+    return input_images
 
 
 
@@ -95,9 +84,7 @@ if __name__=='__main__':
     parser.add_argument('--adaboost_config', type=str, help='path to adaboost configuration list')
 
     parser.add_argument('--single_image', type=str, help='path to an input image')
-    parser.add_argument('--single_label', type=str, help='path to an input label')
     parser.add_argument('--multiple_images', type=str, help='path to an input folder')
-    parser.add_argument('--multiple_labels', type=str, help='y/n if there are labels for the massive images')
 
     args = parser.parse_args()
 
@@ -126,7 +113,7 @@ if __name__=='__main__':
         adaboost_main = AdaBoost_Main(opts.adaboost_cfg)
 
     ## load images and labels
-    input_images, labels = load_inputs(args)
+    input_images = load_inputs(args)
 
     count = 0
     #for input_image in input_images:
