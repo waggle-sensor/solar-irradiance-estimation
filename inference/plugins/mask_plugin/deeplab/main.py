@@ -3,8 +3,8 @@ import torch.nn as nn
 
 from torchvision import transforms
 
-import network
-import utils
+import deeplab.network
+import deeplab.utils
 
 import os
 

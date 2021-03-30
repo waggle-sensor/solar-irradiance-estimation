@@ -93,11 +93,11 @@ if __name__=='__main__':
     parser.add_argument('--single_label', type=str, help='path to an input label')
     parser.add_argument('--multiple_images', type=str, help='path to an input folder')
     parser.add_argument('--multiple_labels', type=str, help='y/n if there are labels for the massive images')
-    
+
     args = parser.parse_args()
 
-    if args.input_image != None and args.input_label == None:
-        print('[warning] path to the label is not provided')
+    if args.input_image != None and args.multiple_images == None:
+        print('[warning] path to the images is not provided')
 
     if args.fcn_config == None and args.unet_config == None and args.pls_config == None and args.deeplab.config == None:
         print('[Error] None of configuration is provided')
