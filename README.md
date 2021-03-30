@@ -26,3 +26,8 @@ download_and_extract_archive(url, 'download', 'data')
 ```
 - The source codes in `raw` folder are stand alone modules for inference. Each `run.sh` shows how to run the codes.
 - The modules in `plugins` are in testing to make them as plugins to run them in Waggle nodes (3/27/2021).
+
+## Notes to developers:
+- Timestamp for cloud cover needs to be the time when the images captured: The timestamp must be provided with the images.
+- The waggle.plugin.publish function is tested, and checked with [log](https://github.com/waggle-sensor/pywaggle/wiki/Plugins:-Getting-Started#debug-logging).
+- Not yet plugin-ized (3/30/2021): needs to be dockerized and create sage.json and others using [virtual waggle](https://github.com/waggle-sensor/virtual-waggle#running-node-application-stack)
