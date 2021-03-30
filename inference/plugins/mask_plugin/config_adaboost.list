@@ -1,5 +1,5 @@
 {
-    "model": "ML_models/AdaBoost_model.pkl",
+    "model": "../ML_models/AdaBoost_model_norm_wo_entropy.pkl",
     "resize": 300,
     "output": "./output_ada_test_mask/",
     "score": "./scores_ada_test_mask/",

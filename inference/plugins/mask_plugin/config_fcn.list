@@ -2,7 +2,7 @@
     "n_classes": 2,
     "backbone": "resnet",
     "fcn": "101",
-    "model": "ML_models/fcn_model.tar",
+    "model": "../ML_models/model_best_28000.pth.tar",
     "resize": 300,
     "output": "./output_fcn_test_mask/",
     "score": "./scores_fcn_test_mask/",

@@ -1,7 +1,7 @@
 {
     "n_classes": 1,
     "scale": 1.0,
-    "model": "ML_models/unet_model.pth",
+    "model": "../ML_models/CP_epoch228a.pth",
     "output": "./output_unet_test_mask/",
     "score": "./scores_unet_test_mask/",
     "threshold": 0.5,

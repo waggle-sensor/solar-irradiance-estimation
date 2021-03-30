@@ -132,13 +132,20 @@ if __name__=='__main__':
         if args.adaboost_config != None:
             adaboost = adaboost_main.evaluation(deeplab, fcn, unet, pls, input_images[i])
 
+        def counting(inarray):
+            count = 0
+            for i in inarray:
+                if i == 1:
+                    count += 1
+            return round(count/(300*300), 2)
+
         if opts.fcn_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.fcn', fcn)
+            plugin.publish('env.cloud_cover.fcn', counting(fcn))
         if opts.unet_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.unet', unet)
+            plugin.publish('env.cloud_cover.unet', counting(unet))
         if opts.pls_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.pls', pls)
+            plugin.publish('env.cloud_cover.pls', counting(pls))
         if opts.deeplab_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.deeplab', deeplab)
+            plugin.publish('env.cloud_cover.deeplab', counting(deeplab))
         if opts.adaboost_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.adaboost', adaboost)
+            plugin.publish('env.cloud_cover.adaboost', counting(adaboost))

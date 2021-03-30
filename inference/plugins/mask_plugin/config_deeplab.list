@@ -2,7 +2,7 @@
     "output_stride": 16,
     "n_classes": 2,
     "model": "deeplabv3_resnet101",
-    "checkpoint": "ML_models/deeplabv3.pth",
+    "checkpoint": "../ML_models/best_68000d_deeplabv3_resnet101_waggle_cloud_os16.pth",
     "separable_conv": "False",
     "resize": 300,
     "output": "./output_deeplab_mask/",
