@@ -13,13 +13,14 @@ import glob
 import numpy as np
 from PIL import Image
 
-
 import waggle.plugin as plugin
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
 plugin.init()
+
+TOPIC_INPUT_IMAGE = "sky_image"
 
 def load_config(args):
     opts = SimpleNamespace()
@@ -57,21 +58,6 @@ def load_config(args):
     return opts
 
 
-def load_inputs(args):
-    input_images = []
-
-    if args.multiple_images != None:
-        args.multiple_images = args.multiple_images + '*'
-        input_images = glob.glob(args.multiple_images)
-        input_images = sorted(input_images)
-
-    elif args.input_image != None:
-        input_images.append(args.input_image)
-
-    return input_images
-
-
-
 if __name__=='__main__':
 
     parser = argparse.ArgumentParser()
@@ -82,19 +68,12 @@ if __name__=='__main__':
     parser.add_argument('--deeplab_config', type=str, help='path to deeplab configuration list')
     parser.add_argument('--adaboost_config', type=str, help='path to adaboost configuration list')
 
-    parser.add_argument('--single_image', type=str, help='path to an input image')
-    parser.add_argument('--multiple_images', type=str, help='path to an input folder')
-
     args = parser.parse_args()
-
-    if args.single_image == None and args.multiple_images == None:
-        print('[warning] path to the images is not provided')
 
     if args.fcn_config == None and args.unet_config == None and args.pls_config == None and args.deeplab_config == None:
         print('[Error] None of configuration is provided')
         parser.print_help()
         exit(0)
-
 
     ## read configuration files
     opts = load_config(args)
@@ -111,40 +90,35 @@ if __name__=='__main__':
     if args.adaboost_config != None:
         adaboost_main = AdaBoost_Main(opts.adaboost_cfg)
 
-    ## load images and labels
-    input_images = load_inputs(args)
-
-    count = 0
-    #for input_image in input_images:
-    for i in range(len(input_images)):
-        count += 1
-        print(count)
+    with open_data_source(id=TOPIC_INPUT_IMAGE) as cap:
+        timestamp, image = cap.get()
 
         if args.fcn_config != None:
-            fcn = fcn_main.run(input_images[i])
+            fcn = fcn_main.run(image)
         if args.pls_config != None:
-            pls = pls_main.run(input_images[i])
+            pls = pls_main.run(image)
         if args.unet_config != None:
-            unet = unet_main.run(input_images[i])
+            unet = unet_main.run(image)
         if args.deeplab_config != None:
-            deeplab = deeplab_main.run(input_images[i])
+            deeplab = deeplab_main.run(image)
         if args.adaboost_config != None:
-            adaboost = adaboost_main.evaluation(deeplab, fcn, unet, pls, input_images[i])
+            adaboost = adaboost_main.evaluation(deeplab, fcn, unet, pls, image)
 
-        def counting(inarray):
+        def counting(inarray, thr):
             count = 0
             for i in inarray:
-                if i == 1:
+                if i > thr:
                     count += 1
             return round(count/(300*300), 2)
 
         if opts.fcn_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.fcn', counting(fcn))
+            plugin.publish('env.cloud_cover.fcn', counting(fcn, 0.3), timestamp=timestamp)
         if opts.unet_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.unet', counting(unet))
+            plugin.publish('env.cloud_cover.unet', counting(unet, 0.5), timestamp=timestamp)
         if opts.pls_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.pls', counting(pls))
+            plugin.publish('env.cloud_cover.pls', counting(pls, 0.5), timestamp=timestamp)
         if opts.deeplab_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.deeplab', counting(deeplab))
+            plugin.publish('env.cloud_cover.deeplab', counting(deeplab, 0.5), timestamp=timestamp)
         if opts.adaboost_cfg['result'] == 'send':
-            plugin.publish('env.cloud_cover.adaboost', counting(adaboost))
+            plugin.publish('env.cloud_cover.adaboost', counting(adaboost), timestamp=timestamp)
+

@@ -18,10 +18,11 @@ class Unet_Main:
         self.net.to(device=self.device)
         self.net.load_state_dict(torch.load(args['model'], map_location=self.device))
 
-        if not os.path.exists(args['output']):
-            os.makedirs(args['output'])
-        if not os.path.exists(args['score']):
-            os.makedirs(args['score'])
+        if args['save'] == 'True':
+            if not os.path.exists(args['output']):
+                os.makedirs(args['output'])
+            if not os.path.exists(args['score']):
+                os.makedirs(args['score'])
 
     def preprocess(self, pil_img, scale, n_classes=2):
         w, h = pil_img.size
