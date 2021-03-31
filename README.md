@@ -26,6 +26,7 @@ download_and_extract_archive(url, 'download', 'data')
 ```
 - The source codes in `raw` folder are stand alone modules for inference. Each `run.sh` shows how to run the codes.
 - The modules in `plugins` are in testing to make them as plugins to run them in Waggle nodes (3/27/2021).
+- To build the plugins as Docker container to run in Waggle nodes, refer [exmple plugin](https://github.com/waggle-sensor/plugin-helloworld-ml) and a [wiki](https://github.com/waggle-sensor/plugin-helloworld-ml/wiki/Dockerization:-Getting-Started#dockerization-getting-started) (3/31/2021).
 
 ## Notes to developers:
 - Timestamp for cloud cover needs to be the time when the images captured: The timestamp must be provided with the images.
